@@ -42,7 +42,16 @@ export function getPopularMovies() {
           return element.genre_ids.includes(genre.id) ? genre.name : null;
         }).filter(genre => genre != null);
 
-        movies.push({'title' : element.title, 'poster': element.poster_path, 'rating': element.vote_average, 'genres': genresTitles}); 
+        let inWatchlist = false;
+
+        JSON.parse(localStorage.getItem('watchlistMovies')).forEach(e => {
+
+          if (e.id === element.id){
+            inWatchlist = true ;
+          }
+        }); 
+
+        movies.push({'id':element.id, 'title' : element.title, 'poster': element.poster_path, 'rating': element.vote_average, 'genres': genresTitles, 'inWatchlist': inWatchlist}); 
       });
 
       let result = movies.map((movie, index) => {
@@ -74,7 +83,16 @@ export function getLatestMovies() {
           return element.genre_ids.includes(genre.id) ? genre.name : null;
         }).filter(genre => genre != null);
 
-        movies.push({'title' : element.title, 'poster': element.poster_path, 'rating': element.vote_average, 'genres': genresTitles}); 
+        let inWatchlist = false;
+
+        JSON.parse(localStorage.getItem('watchlistMovies')).forEach(e => {
+ 
+          if (e.id === element.id){
+            inWatchlist = true ;
+          }
+        }); 
+
+        movies.push({'id':element.id, 'title' : element.title, 'poster': element.poster_path, 'rating': element.vote_average, 'genres': genresTitles, 'inWatchlist': inWatchlist}); 
       });
 
       let result = movies.map((movie, index) => {

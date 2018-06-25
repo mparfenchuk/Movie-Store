@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import * as Icon from 'react-feather';
 import Popular from './components/Popular';
 import Latest from './components/Latest';
+import Watchlist from './components/Watchlist';
 
 import './App.css';
 
@@ -21,34 +22,67 @@ class App extends Component {
 
   onInputChange(event) {
 
-    let {movies} = this.props;
+    let {navActive} = this.state;
+    let {movies, watchlistMovies} = this.props;
 
-    if (movies.length > 0){
+    if (navActive === 'WATCHLIST'){
 
-      let result = [];
+      if (watchlistMovies.length > 0){
 
-      movies.map((movieRow, index) => {
-        return movieRow.map((movie, index)=>{
+        let result = [];
+
+        watchlistMovies.map((movie, index) => {
           return movie.title.toLowerCase().includes(event.target.value.toLowerCase()) ? result.push(movie) : null;
         }).filter(movie => movie != null);
-      }).filter(movieRow => movieRow != null);
 
-      let searchResult = result.map((movie, index) => {
-        return index % 2 === 0 ? result.slice(index, index + 2) : null;
-      }).filter(movie => movie != null);
+        let searchResult = result.map((movie, index) => {
+          return index % 2 === 0 ? result.slice(index, index + 2) : null;
+        }).filter(movie => movie != null);
 
-      if(event.target.value !== ""){
-        this.setState({ 
-          searchInput: event.target.value,
-          searchResult: searchResult
-        });
-      } else {
-        this.setState({ 
-          searchInput: "",
-          searchResult: []
-        });
+        if(event.target.value !== ""){
+
+          this.setState({ 
+            searchInput: event.target.value,
+            searchResult: searchResult
+          });
+        } else {
+
+          this.setState({ 
+            searchInput: "",
+            searchResult: []
+          });
+        }
       }
-      
+    } else {
+
+      if (movies.length > 0){
+
+        let result = [];
+
+        movies.map((movieRow, index) => {
+          return movieRow.map((movie, index)=>{
+            return movie.title.toLowerCase().includes(event.target.value.toLowerCase()) ? result.push(movie) : null;
+          }).filter(movie => movie != null);
+        }).filter(movieRow => movieRow != null);
+
+        let searchResult = result.map((movie, index) => {
+          return index % 2 === 0 ? result.slice(index, index + 2) : null;
+        }).filter(movie => movie != null);
+
+        if(event.target.value !== ""){
+
+          this.setState({ 
+            searchInput: event.target.value,
+            searchResult: searchResult
+          });
+        } else {
+
+          this.setState({ 
+            searchInput: "",
+            searchResult: []
+          });
+        }  
+      }
     }
   }
 
@@ -123,8 +157,8 @@ class App extends Component {
 
               {(navActive === 'LATEST') ? <Latest/> : ""}
               {(navActive === 'POPULAR') ? <Popular/> : ""}
-              
-              
+              {(navActive === 'WATCHLIST') ? <Watchlist/> : ""}
+  
             </main>
           </div>
         </div>
@@ -135,7 +169,8 @@ class App extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    movies:state.movies.movies
+    movies:state.movies.movies,
+    watchlistMovies:state.movies.watchlistMovies
   }
 }
 

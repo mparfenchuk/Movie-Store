@@ -1,58 +1,25 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import * as Icon from 'react-feather';
-import { getLatestMovies } from '../actions/movies';
-import { add, remove } from '../actions/watchlist';
+import { removeFromWatchlist } from '../actions/watchlist';
 
-class Latest extends Component {
+class Watchlist extends Component {
 
-
-  componentDidMount(){
+  doWatchlist(movie) {
 
     let { dispatch } = this.props;
-
-    dispatch(getLatestMovies());
-
-  }
-
-  doWatchlist(movieId) {
-
-    let { dispatch, movies } = this.props;
-
-    let targetMovie;
     
-    let updatedMovies = movies.map((movieRow, index) => {
-      return movieRow.map((movie, index)=>{
-        if(movie.id === movieId){
-          if(movie.inWatchlist){
-
-            targetMovie = Object.assign({}, movie, {
-              inWatchlist: false
-            });
-            return targetMovie;
-          } else {
-
-            targetMovie = Object.assign({}, movie, {
-              inWatchlist: true
-            });
-            return targetMovie;
-          }
-        } else {
-          return movie;
-        }
-      }).filter(movie => movie != null);
-    }).filter(movieRow => movieRow != null);
-
-    if (!targetMovie.inWatchlist){
-      return dispatch(remove({'movies':updatedMovies, 'movie':targetMovie}));
-    } else {
-      return dispatch(add({'movies':updatedMovies, 'movie':targetMovie}));
-    }
-    
+    return dispatch(removeFromWatchlist(movie));
   }
 
   render() {
 
+    let { watchlistMovies } = this.props;
+
+    let result = watchlistMovies.map((movie, index) => {
+        return index % 4 === 0 ? watchlistMovies.slice(index, index + 4) : null;
+      }).filter(movie => movie != null);
+      
     const Movies = ({movies}) => (
         <div className="container">
           {movies.map((moviesRow, rowIndex) => {
@@ -62,7 +29,7 @@ class Latest extends Component {
                   <div className="card mb-4 box-shadow">
                       <img className="card-img-top" src={'https://image.tmdb.org/t/p/w500'+movie.poster} alt={movie.title}/>
                       <div className="card-body">
-                          <h5 className="card-title">{movie.title+' '}<Icon.Eye onClick={this.doWatchlist.bind(this, movie.id)} className={(movie.inWatchlist) ? "watchlist added": "watchlist"}/></h5>
+                          <h5 className="card-title">{movie.title+' '}<Icon.Eye onClick={this.doWatchlist.bind(this, movie)} className={(movie.inWatchlist) ? "watchlist added": "watchlist"}/></h5>
                           {movie.genres.map((genre, index)=>
                             <span className="badge badge-dark mr-2" key={index}>{genre}</span>
                           )}
@@ -83,8 +50,8 @@ class Latest extends Component {
 
     return (
       <div>
-        <h1 className="h2">Latest</h1>
-        <Movies movies={this.props.movies}/>
+        <h1 className="h2">Watchlist</h1>
+        <Movies movies={result}/>
       </div>
     );
   }
@@ -92,8 +59,8 @@ class Latest extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    movies:state.movies.movies
+    watchlistMovies:state.movies.watchlistMovies
   }
 }
 
-export default connect(mapStateToProps)(Latest);
+export default connect(mapStateToProps)(Watchlist);

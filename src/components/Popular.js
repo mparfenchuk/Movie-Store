@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
+import * as Icon from 'react-feather';
 import { getPopularMovies } from '../actions/movies';
+import { add, remove } from '../actions/watchlist';
 
 class Popular extends Component {
  
@@ -10,6 +12,42 @@ class Popular extends Component {
 
     dispatch(getPopularMovies());
 
+  }
+
+  doWatchlist(movieId) {
+
+    let { dispatch, movies } = this.props;
+
+    let targetMovie;
+    
+    let updatedMovies = movies.map((movieRow, index) => {
+      return movieRow.map((movie, index)=>{
+        if(movie.id === movieId){
+          if(movie.inWatchlist){
+
+            targetMovie = Object.assign({}, movie, {
+              inWatchlist: false
+            });
+            return targetMovie;
+          } else {
+
+            targetMovie = Object.assign({}, movie, {
+              inWatchlist: true
+            });
+            return targetMovie;
+          }
+        } else {
+          return movie;
+        }
+      }).filter(movie => movie != null);
+    }).filter(movieRow => movieRow != null);
+
+    if (!targetMovie.inWatchlist){
+      return dispatch(remove({'movies':updatedMovies, 'movie':targetMovie}));
+    } else {
+      return dispatch(add({'movies':updatedMovies, 'movie':targetMovie}));
+    }
+    
   }
 
   render() {
@@ -23,7 +61,7 @@ class Popular extends Component {
                 <div className="card mb-4 box-shadow">
                     <img className="card-img-top" src={'https://image.tmdb.org/t/p/w500'+movie.poster} alt={movie.title}/>
                     <div className="card-body">
-                        <h5 className="card-title">{movie.title}</h5>
+                        <h5 className="card-title">{movie.title+' '}<Icon.Eye onClick={this.doWatchlist.bind(this, movie.id)} className={(movie.inWatchlist) ? "watchlist added": "watchlist"}/></h5>
                         {movie.genres.map((genre, index)=>
                           <span className="badge badge-dark mr-2" key={index}>{genre}</span>
                         )}
