@@ -4,68 +4,118 @@ if(localStorage.getItem('watchlistMovies') === null){
   localStorage.setItem('watchlistMovies', JSON.stringify([]));
 }
 
-const initialState = {  
+const initialState = {
+  moviesAreLoading: false,
+  movieIsLoading: false,
+  movieHasError:null,
+  movie:null,
   movies:[],
+  searchIsLoading:false,
+  search:[],
   watchlistMovies:JSON.parse(localStorage.getItem('watchlistMovies'))
 }
   
 const moviesReducer = (state = initialState, action) => {
-    if (action.type === constants.SET_POPULAR)
-    {
-      return Object.assign({}, state, {   
-        movies: action.payload,
-        watchlistMovies: state.watchlistMovies
-      })
+  switch (action.type) {
+    case constants.SET_POPULAR:{
+      return {
+        ...state,
+        moviesAreLoading: false,
+        movies: action.payload
+      }
     }
-
-    if (action.type === constants.SET_LATEST)
-    {
-      return Object.assign({}, state, {   
-        movies: action.payload,
-        watchlistMovies: state.watchlistMovies
-      })
+    case constants.SET_LATEST:{
+      return {
+        ...state,
+        moviesAreLoading: false,
+        movies: action.payload
+      }
     }
-
-    if (action.type === constants.ADD_TO_WATCHLIST)
-    {
+    case constants.SET_SEARCH:{
+      return {
+        ...state,
+        searchIsLoading: false,
+        search: action.payload
+      }
+    }
+    case constants.SET_MOVIE:{
+      return {
+        ...state,
+        movieIsLoading: false,
+        movieHasError: null,
+        movie: action.payload
+      }
+    }
+    case constants.MOVIES_ARE_LOADING:{
+      return {
+        ...state,
+        moviesAreLoading: true
+      }
+    }
+    case constants.SEARCH_IS_LOADING:{
+      return {
+        ...state,
+        searchIsLoading: true
+      }
+    }
+    case constants.CLEAR_SEARCH:{
+      return {
+        ...state,
+        searchIsLoading: false,
+        search:[]
+      }
+    }
+    case constants.MOVIE_IS_LOADING:{
+      return {
+        ...state,
+        movieIsLoading: true
+      }
+    }
+    case constants.MOVIE_HAS_ERROR:{
+      return {
+        ...state,
+        movieHasError: action.payload,
+        movieIsLoading: false
+      }
+    }
+    case constants.ADD_TO_WATCHLIST:{
 
       let newList = [...state.watchlistMovies, action.payload.movie];
 
       localStorage.setItem('watchlistMovies', JSON.stringify(newList));
 
-      return Object.assign({}, state, { 
-        movies: action.payload.movies,
+      return {
+        ...state,
+        movie: action.payload.movie,
         watchlistMovies: newList
-      })
+      }
     }
-
-    if (action.type === constants.REMOVE_FROM_WATCHLIST)
-    {
+    case constants.REMOVE_FROM_WATCHLIST:{
 
       let newList = state.watchlistMovies.filter(movie => movie.id !== action.payload.movie.id);
 
       localStorage.setItem('watchlistMovies', JSON.stringify(newList));
 
-      return Object.assign({}, state, {  
-        movies: action.payload.movies,
+      return {
+        ...state,
+        movie: action.payload.movie,
         watchlistMovies: newList
-      })
+      }
     }
-
-    if (action.type === constants.REMOVE_FROM_WATCHLIST_FROM_WATCHLIST)
-    {
+    case constants.REMOVE_FROM_WATCHLIST_FROM_WATCHLIST:{
 
       let newList = state.watchlistMovies.filter(movie => movie !== action.payload);
 
       localStorage.setItem('watchlistMovies', JSON.stringify(newList));
 
-      return Object.assign({}, state, {  
-        movies: state.movies,
+      return {
+        ...state,
         watchlistMovies: newList
-      })
+      }
     }
-  
-    return state
+    default:
+      return state;
   }
+}
   
 export default moviesReducer

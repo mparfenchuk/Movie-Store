@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
+import { Route, Link, Redirect, Switch } from 'react-router-dom'
 import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import * as Icon from 'react-feather';
+import { doSearch, clearSearch } from './actions/movies';
 import Popular from './components/Popular';
 import Latest from './components/Latest';
 import Watchlist from './components/Watchlist';
+import Movie from './components/Movie';
 
 import './App.css';
 
@@ -13,8 +17,6 @@ class App extends Component {
     super(props)
 
     this.state = {
-      navActive: 'LATEST',
-      searchResult: [],
       searchInput: ''
     }
     this.onInputChange = this.onInputChange.bind(this);
@@ -22,73 +24,26 @@ class App extends Component {
 
   onInputChange(event) {
 
-    let {navActive} = this.state;
-    let {movies, watchlistMovies} = this.props;
+    let { doSearch, clearSearch } = this.props;
 
-    if (navActive === 'WATCHLIST'){
-
-      if (watchlistMovies.length > 0){
-
-        let result = [];
-
-        watchlistMovies.map((movie, index) => {
-          return movie.title.toLowerCase().includes(event.target.value.toLowerCase()) ? result.push(movie) : null;
-        }).filter(movie => movie != null);
-
-        let searchResult = result.map((movie, index) => {
-          return index % 2 === 0 ? result.slice(index, index + 2) : null;
-        }).filter(movie => movie != null);
-
-        if(event.target.value !== ""){
-
-          this.setState({ 
-            searchInput: event.target.value,
-            searchResult: searchResult
-          });
-        } else {
-
-          this.setState({ 
-            searchInput: "",
-            searchResult: []
-          });
+    let {searchInput} = this.state;
+  
+    this.setState({
+      searchInput: event.target.value.toLowerCase()
+    }, () => {
+      if (searchInput && searchInput.length > 1) {
+        if (searchInput.length % 2 === 0) {
+          doSearch(searchInput);
         }
+      } else {
+        clearSearch();
       }
-    } else {
-
-      if (movies.length > 0){
-
-        let result = [];
-
-        movies.map((movieRow, index) => {
-          return movieRow.map((movie, index)=>{
-            return movie.title.toLowerCase().includes(event.target.value.toLowerCase()) ? result.push(movie) : null;
-          }).filter(movie => movie != null);
-        }).filter(movieRow => movieRow != null);
-
-        let searchResult = result.map((movie, index) => {
-          return index % 2 === 0 ? result.slice(index, index + 2) : null;
-        }).filter(movie => movie != null);
-
-        if(event.target.value !== ""){
-
-          this.setState({ 
-            searchInput: event.target.value,
-            searchResult: searchResult
-          });
-        } else {
-
-          this.setState({ 
-            searchInput: "",
-            searchResult: []
-          });
-        }  
-      }
-    }
+    })
   }
 
   render() {
 
-    let {navActive, searchResult} = this.state;
+    let {pathname, searchIsLoading, search} = this.props;
 
     const Movies = ({movies}) => (
       <div className="container">
@@ -96,7 +51,7 @@ class App extends Component {
           return (<div className="row" key={rowIndex}>
             {moviesRow.map((movie, index) => 
               <div className="col-md-6" key={index}>
-                <div className="card mb-4 box-shadow">
+                <Link to={"/movie/"+movie.id} target="_blank" className="card mb-4 box-shadow movie">
                     <div className="card-body">
                         <h5 className="card-title">{movie.title}</h5>
                         {movie.genres.map((genre, index)=>
@@ -109,7 +64,7 @@ class App extends Component {
                           </div>
                         </div>
                     </div>
-                </div>
+                </Link>
               </div>
             )}
           </div>);
@@ -130,35 +85,41 @@ class App extends Component {
               <div className="sidebar-sticky">
                 <ul className="nav flex-column">
                   <li className="nav-item">
-                    <a className={(navActive === 'LATEST') ? "nav-link active" : "nav-link"} onClick={(e) => {this.setState({ navActive: 'LATEST', searchInput: "", searchResult: [] }); window.scrollTo(0, 0);}}>
-                      <Icon.Clock className="feather"/><br/>
-                      LATEST {(navActive === 'LATEST') ? <span className="sr-only">(current)</span> : ""}
-                    </a>
+                    <Link to="/latest" className={(pathname === '/latest') ? "nav-link active" : "nav-link"} onClick={(e) => {this.setState({ searchInput: "", searchResult: [] }); window.scrollTo(0, 0);}}>
+                        <Icon.Clock className="feather"/><br/>
+                        LATEST {(pathname === '/latest') ? <span className="sr-only">(current)</span> : ""}
+                    </Link>
                   </li>
                   <li className="nav-item">
-                    <a className={(navActive === 'POPULAR') ? "nav-link active" : "nav-link"} onClick={(e) => {this.setState({ navActive: 'POPULAR', searchInput: "", searchResult: [] }); window.scrollTo(0, 0);}}>
+                    <Link to="/popular" className={(pathname === '/popular') ? "nav-link active" : "nav-link"} onClick={(e) => {this.setState({ searchInput: "", searchResult: [] }); window.scrollTo(0, 0);}}>
                       <Icon.Star className="feather"/><br/>
-                      POPULAR {(navActive === 'POPULAR') ? <span className="sr-only">(current)</span> : ""}
-                    </a>
+                      POPULAR {(pathname === '/popular') ? <span className="sr-only">(current)</span> : ""}
+                    </Link>
                   </li>
                   <li className="nav-item">
-                    <a className={(navActive === 'WATCHLIST') ? "nav-link active" : "nav-link"} onClick={(e) => {this.setState({ navActive: 'WATCHLIST', searchInput: "", searchResult: [] }); window.scrollTo(0, 0);}}>
+                    <Link to="/watchlist" className={(pathname === '/watchlist') ? "nav-link active" : "nav-link"} onClick={(e) => {this.setState({ searchInput: "", searchResult: [] }); window.scrollTo(0, 0);}}>
                       <Icon.Menu className="feather"/><br/>
-                      WATCHLIST {(navActive === 'WATCHLIST') ? <span className="sr-only">(current)</span> : ""}
-                    </a>
+                      WATCHLIST {(pathname === '/watchlist') ? <span className="sr-only">(current)</span> : ""}
+                    </Link>
                   </li>
                 </ul> 
               </div>
             </nav>
 
             <main role="main" className="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-
-              <Movies movies={searchResult}/>
-
-              {(navActive === 'LATEST') ? <Latest/> : ""}
-              {(navActive === 'POPULAR') ? <Popular/> : ""}
-              {(navActive === 'WATCHLIST') ? <Watchlist/> : ""}
-  
+              {searchIsLoading ? 
+                <div className="loader mx-auto mt-2"></div>
+              :   
+                <Movies movies={search}/>
+              }
+              <Switch>
+                <Redirect exact from='/' to='/latest'/>
+                <Route exact path="/latest" component={Latest} />
+                <Route exact path="/popular" component={Popular} />             
+                <Route exact path="/watchlist" component={Watchlist} />
+                <Route path='/movie/:movieId' component={Movie}/>
+                <Route component={()=>(<div><h1>Not Found 404</h1></div>)} />
+              </Switch>
             </main>
           </div>
         </div>
@@ -170,9 +131,17 @@ class App extends Component {
 const mapStateToProps = (state) => {
   return {
     movies:state.movies.movies,
+    search:state.movies.search,
+    searchIsLoading:state.movies.searchIsLoading,
+    pathname: state.router.location.pathname,
     watchlistMovies:state.movies.watchlistMovies
   }
 }
 
-export default connect(mapStateToProps)(App);
+const mapDispatchToProps = dispatch => bindActionCreators({
+  doSearch,
+  clearSearch
+}, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
 

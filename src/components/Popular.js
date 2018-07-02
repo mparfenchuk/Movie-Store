@@ -1,56 +1,22 @@
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import * as Icon from 'react-feather';
+import { Link } from 'react-router-dom'
 import { getPopularMovies } from '../actions/movies';
-import { add, remove } from '../actions/watchlist';
 
 class Popular extends Component {
  
   componentDidMount(){
 
-    let { dispatch } = this.props
+    let { getPopularMovies } = this.props
 
-    dispatch(getPopularMovies());
+    getPopularMovies();
 
-  }
-
-  doWatchlist(movieId) {
-
-    let { dispatch, movies } = this.props;
-
-    let targetMovie;
-    
-    let updatedMovies = movies.map((movieRow, index) => {
-      return movieRow.map((movie, index)=>{
-        if(movie.id === movieId){
-          if(movie.inWatchlist){
-
-            targetMovie = Object.assign({}, movie, {
-              inWatchlist: false
-            });
-            return targetMovie;
-          } else {
-
-            targetMovie = Object.assign({}, movie, {
-              inWatchlist: true
-            });
-            return targetMovie;
-          }
-        } else {
-          return movie;
-        }
-      }).filter(movie => movie != null);
-    }).filter(movieRow => movieRow != null);
-
-    if (!targetMovie.inWatchlist){
-      return dispatch(remove({'movies':updatedMovies, 'movie':targetMovie}));
-    } else {
-      return dispatch(add({'movies':updatedMovies, 'movie':targetMovie}));
-    }
-    
   }
 
   render() {
+
+    let {moviesAreLoading, movies} = this.props
 
     const Movies = ({movies}) => (
       <div className="container">
@@ -58,10 +24,10 @@ class Popular extends Component {
           return (<div className="row" key={rowIndex}>
             {moviesRow.map((movie, index) => 
               <div className="col-md-3" key={index}>
-                <div className="card mb-4 box-shadow">
+                <Link to={"/movie/"+movie.id} className="card mb-4 box-shadow movie">
                     <img className="card-img-top" src={'https://image.tmdb.org/t/p/w500'+movie.poster} alt={movie.title}/>
                     <div className="card-body">
-                        <h5 className="card-title">{movie.title+' '}<Icon.Eye onClick={this.doWatchlist.bind(this, movie.id)} className={(movie.inWatchlist) ? "watchlist added": "watchlist"}/></h5>
+                        <h5 className="card-title">{movie.title+' '}</h5>
                         {movie.genres.map((genre, index)=>
                           <span className="badge badge-dark mr-2" key={index}>{genre}</span>
                         )}
@@ -72,7 +38,7 @@ class Popular extends Component {
                           </div>
                         </div>
                     </div>
-                </div>
+                </Link>
               </div>
             )}
           </div>);
@@ -83,7 +49,11 @@ class Popular extends Component {
     return (
       <div>
         <h1 className="h2">Popular</h1>
-        <Movies movies={this.props.movies}/>
+        {moviesAreLoading ? 
+          <div className="loader mx-auto mt-2"></div>
+        :   
+          <Movies movies={movies}/>
+        }
       </div>
     );
   }
@@ -91,8 +61,13 @@ class Popular extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    movies:state.movies.movies
+    movies:state.movies.movies,
+    moviesAreLoading:state.movies.moviesAreLoading
   }
 }
 
-export default connect(mapStateToProps)(Popular);
+const mapDispatchToProps = dispatch => bindActionCreators({
+  getPopularMovies
+}, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(Popular);

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import * as Icon from 'react-feather';
+//import * as Icon from 'react-feather';
+import { Link } from 'react-router-dom'
 import { removeFromWatchlist } from '../actions/watchlist';
 
 class Watchlist extends Component {
@@ -26,10 +27,10 @@ class Watchlist extends Component {
             return (<div className="row" key={rowIndex}>
               {moviesRow.map((movie, index) => 
                 <div className="col-md-3" key={index}>
-                  <div className="card mb-4 box-shadow">
+                  <Link to={"/movie/"+movie.id} className="card mb-4 box-shadow movie">
                       <img className="card-img-top" src={'https://image.tmdb.org/t/p/w500'+movie.poster} alt={movie.title}/>
                       <div className="card-body">
-                          <h5 className="card-title">{movie.title+' '}<Icon.Eye onClick={this.doWatchlist.bind(this, movie)} className={(movie.inWatchlist) ? "watchlist added": "watchlist"}/></h5>
+                          <h5 className="card-title">{movie.title+' '}{/*<Icon.Eye onClick={this.doWatchlist.bind(this, movie)} className={(movie.inWatchlist) ? "watchlist added": "watchlist"}/>*/}</h5>
                           {movie.genres.map((genre, index)=>
                             <span className="badge badge-dark mr-2" key={index}>{genre}</span>
                           )}
@@ -40,7 +41,7 @@ class Watchlist extends Component {
                             </div>
                           </div>
                       </div>
-                  </div>
+                  </Link>
                 </div>
               )}
             </div>);
