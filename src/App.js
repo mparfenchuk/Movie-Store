@@ -85,19 +85,19 @@ class App extends Component {
               <div className="sidebar-sticky">
                 <ul className="nav flex-column">
                   <li className="nav-item">
-                    <Link to="/movie-store/latest" className={(pathname === '/latest') ? "nav-link active" : "nav-link"} onClick={(e) => {this.setState({ searchInput: "", searchResult: [] }); window.scrollTo(0, 0);}}>
+                    <Link to="/movie-store/latest" className={(pathname === '/movie-store/latest') ? "nav-link active" : "nav-link"} onClick={(e) => {this.setState({ searchInput: "", searchResult: [] }); window.scrollTo(0, 0);}}>
                         <Icon.Clock className="feather"/><br/>
                         LATEST {(pathname === '/movie-store/latest') ? <span className="sr-only">(current)</span> : ""}
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link to="/movie-store/popular" className={(pathname === '/popular') ? "nav-link active" : "nav-link"} onClick={(e) => {this.setState({ searchInput: "", searchResult: [] }); window.scrollTo(0, 0);}}>
+                    <Link to="/movie-store/popular" className={(pathname === '/movie-store/popular') ? "nav-link active" : "nav-link"} onClick={(e) => {this.setState({ searchInput: "", searchResult: [] }); window.scrollTo(0, 0);}}>
                       <Icon.Star className="feather"/><br/>
                       POPULAR {(pathname === '/movie-store/popular') ? <span className="sr-only">(current)</span> : ""}
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link to="/movie-store/watchlist" className={(pathname === '/watchlist') ? "nav-link active" : "nav-link"} onClick={(e) => {this.setState({ searchInput: "", searchResult: [] }); window.scrollTo(0, 0);}}>
+                    <Link to="/movie-store/watchlist" className={(pathname === '/movie-store/watchlist') ? "nav-link active" : "nav-link"} onClick={(e) => {this.setState({ searchInput: "", searchResult: [] }); window.scrollTo(0, 0);}}>
                       <Icon.Menu className="feather"/><br/>
                       WATCHLIST {(pathname === '/movie-store/watchlist') ? <span className="sr-only">(current)</span> : ""}
                     </Link>
