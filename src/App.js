@@ -51,7 +51,7 @@ class App extends Component {
           return (<div className="row" key={rowIndex}>
             {moviesRow.map((movie, index) => 
               <div className="col-md-6" key={index}>
-                <Link to={"/movie/"+movie.id} target="_blank" className="card mb-4 box-shadow movie">
+                <Link to={"/movie-store/movie/"+movie.id} target="_blank" className="card mb-4 box-shadow movie">
                     <div className="card-body">
                         <h5 className="card-title">{movie.title}</h5>
                         {movie.genres.map((genre, index)=>
@@ -85,19 +85,19 @@ class App extends Component {
               <div className="sidebar-sticky">
                 <ul className="nav flex-column">
                   <li className="nav-item">
-                    <Link to="/latest" className={(pathname === '/latest') ? "nav-link active" : "nav-link"} onClick={(e) => {this.setState({ searchInput: "", searchResult: [] }); window.scrollTo(0, 0);}}>
+                    <Link to="/movie-store/latest" className={(pathname === '/latest') ? "nav-link active" : "nav-link"} onClick={(e) => {this.setState({ searchInput: "", searchResult: [] }); window.scrollTo(0, 0);}}>
                         <Icon.Clock className="feather"/><br/>
                         LATEST {(pathname === '/latest') ? <span className="sr-only">(current)</span> : ""}
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link to="/popular" className={(pathname === '/popular') ? "nav-link active" : "nav-link"} onClick={(e) => {this.setState({ searchInput: "", searchResult: [] }); window.scrollTo(0, 0);}}>
+                    <Link to="/movie-store/popular" className={(pathname === '/popular') ? "nav-link active" : "nav-link"} onClick={(e) => {this.setState({ searchInput: "", searchResult: [] }); window.scrollTo(0, 0);}}>
                       <Icon.Star className="feather"/><br/>
                       POPULAR {(pathname === '/popular') ? <span className="sr-only">(current)</span> : ""}
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link to="/watchlist" className={(pathname === '/watchlist') ? "nav-link active" : "nav-link"} onClick={(e) => {this.setState({ searchInput: "", searchResult: [] }); window.scrollTo(0, 0);}}>
+                    <Link to="/movie-store/watchlist" className={(pathname === '/watchlist') ? "nav-link active" : "nav-link"} onClick={(e) => {this.setState({ searchInput: "", searchResult: [] }); window.scrollTo(0, 0);}}>
                       <Icon.Menu className="feather"/><br/>
                       WATCHLIST {(pathname === '/watchlist') ? <span className="sr-only">(current)</span> : ""}
                     </Link>
@@ -113,11 +113,11 @@ class App extends Component {
                 <Movies movies={search}/>
               }
               <Switch>
-                <Redirect exact from='/' to='/latest'/>
-                <Route exact path="/latest" component={Latest} />
-                <Route exact path="/popular" component={Popular} />             
-                <Route exact path="/watchlist" component={Watchlist} />
-                <Route path='/movie/:movieId' component={Movie}/>
+                <Redirect exact from='/movie-store/' to='/movie-store/latest'/>
+                <Route exact path="/movie-store/latest" component={Latest} />
+                <Route exact path="/movie-store/popular" component={Popular} />             
+                <Route exact path="/movie-store/watchlist" component={Watchlist} />
+                <Route path='/movie-store/movie/:movieId' component={Movie}/>
                 <Route component={()=>(<div><h1>Not Found 404</h1></div>)} />
               </Switch>
             </main>

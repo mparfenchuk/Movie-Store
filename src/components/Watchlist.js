@@ -27,7 +27,7 @@ class Watchlist extends Component {
             return (<div className="row" key={rowIndex}>
               {moviesRow.map((movie, index) => 
                 <div className="col-md-3" key={index}>
-                  <Link to={"/movie/"+movie.id} className="card mb-4 box-shadow movie">
+                  <Link to={"/movie-store/movie/"+movie.id} className="card mb-4 box-shadow movie">
                       <img className="card-img-top" src={'https://image.tmdb.org/t/p/w500'+movie.poster} alt={movie.title}/>
                       <div className="card-body">
                           <h5 className="card-title">{movie.title+' '}{/*<Icon.Eye onClick={this.doWatchlist.bind(this, movie)} className={(movie.inWatchlist) ? "watchlist added": "watchlist"}/>*/}</h5>
