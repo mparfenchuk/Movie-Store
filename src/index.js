@@ -13,7 +13,7 @@ import registerServiceWorker from './registerServiceWorker';
 
 ReactDOM.render((
   <Provider store={store}>
-    <ConnectedRouter history={history}>
+    <ConnectedRouter onUpdate={() => window.scrollTo(0, 0)} history={history}>
         <Switch>
           <Route path="/" component={App} />
         </Switch>
