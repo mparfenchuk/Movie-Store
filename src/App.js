@@ -87,19 +87,19 @@ class App extends Component {
                   <li className="nav-item">
                     <Link to="/movie-store/latest" className={(pathname === '/latest') ? "nav-link active" : "nav-link"} onClick={(e) => {this.setState({ searchInput: "", searchResult: [] }); window.scrollTo(0, 0);}}>
                         <Icon.Clock className="feather"/><br/>
-                        LATEST {(pathname === '/latest') ? <span className="sr-only">(current)</span> : ""}
+                        LATEST {(pathname === '/movie-store/latest') ? <span className="sr-only">(current)</span> : ""}
                     </Link>
                   </li>
                   <li className="nav-item">
                     <Link to="/movie-store/popular" className={(pathname === '/popular') ? "nav-link active" : "nav-link"} onClick={(e) => {this.setState({ searchInput: "", searchResult: [] }); window.scrollTo(0, 0);}}>
                       <Icon.Star className="feather"/><br/>
-                      POPULAR {(pathname === '/popular') ? <span className="sr-only">(current)</span> : ""}
+                      POPULAR {(pathname === '/movie-store/popular') ? <span className="sr-only">(current)</span> : ""}
                     </Link>
                   </li>
                   <li className="nav-item">
                     <Link to="/movie-store/watchlist" className={(pathname === '/watchlist') ? "nav-link active" : "nav-link"} onClick={(e) => {this.setState({ searchInput: "", searchResult: [] }); window.scrollTo(0, 0);}}>
                       <Icon.Menu className="feather"/><br/>
-                      WATCHLIST {(pathname === '/watchlist') ? <span className="sr-only">(current)</span> : ""}
+                      WATCHLIST {(pathname === '/movie-store/watchlist') ? <span className="sr-only">(current)</span> : ""}
                     </Link>
                   </li>
                 </ul> 
