@@ -7,7 +7,8 @@ import { doSearch, clearSearch } from './actions/movies';
 import Popular from './components/Popular';
 import Latest from './components/Latest';
 import Watchlist from './components/Watchlist';
-import Movie from './components/Movie';
+import MoviePage from './components/MoviePage';
+import Movies from './components/layout/Movies'
 
 import './App.css';
 
@@ -25,17 +26,16 @@ class App extends Component {
   onInputChange(event) {
 
     let { doSearch, clearSearch } = this.props;
+    let query = event.target.value.toLowerCase();
 
-    let {searchInput} = this.state;
-  
     this.setState({
-      searchInput: event.target.value.toLowerCase()
+      searchInput: query
     }, () => {
-      if (searchInput && searchInput.length > 1) {
-        if (searchInput.length % 2 === 0) {
-          doSearch(searchInput);
-        }
+      if (query && query.length > 1) {
+        
+        doSearch(query);
       } else {
+
         clearSearch();
       }
     })
@@ -44,33 +44,6 @@ class App extends Component {
   render() {
 
     let {pathname, searchIsLoading, search} = this.props;
-
-    const Movies = ({movies}) => (
-      <div className="container">
-        {movies.map((moviesRow, rowIndex) => {
-          return (<div className="row" key={rowIndex}>
-            {moviesRow.map((movie, index) => 
-              <div className="col-md-6" key={index}>
-                <Link to={"/movie-store/movie/"+movie.id} target="_blank" className="card mb-4 box-shadow movie">
-                    <div className="card-body">
-                        <h5 className="card-title">{movie.title}</h5>
-                        {movie.genres.map((genre, index)=>
-                          <span className="badge badge-dark mr-2" key={index}>{genre}</span>
-                        )}
-                        <div className="mt-2">
-                          <small className="text-muted">Rating:</small>
-                          <div className="progress col-6 pl-0 pr-0">
-                            <div className={(movie.rating > 8) ? "progress-bar bg-success": (movie.rating < 6) ? "progress-bar bg-danger": "progress-bar bg-info"} role="progressbar" style={{width:movie.rating*10+'%'}} aria-valuenow={movie.rating} aria-valuemin="0" aria-valuemax="100">{movie.rating}%</div>
-                          </div>
-                        </div>
-                    </div>
-                </Link>
-              </div>
-            )}
-          </div>);
-        })}
-      </div>
-    ); 
 
     return (
       <div>
@@ -110,14 +83,14 @@ class App extends Component {
               {searchIsLoading ? 
                 <div className="loader mx-auto mt-2"></div>
               :   
-                <Movies movies={search}/>
+                <Movies type='search' movies={search}/>
               }
               <Switch>
                 <Redirect exact from='/movie-store/' to='/movie-store/latest'/>
                 <Route exact path="/movie-store/latest" component={Latest} />
                 <Route exact path="/movie-store/popular" component={Popular} />             
                 <Route exact path="/movie-store/watchlist" component={Watchlist} />
-                <Route path='/movie-store/movie/:movieId' component={Movie}/>
+                <Route path='/movie-store/movie/:movieId' component={MoviePage}/>
                 <Route component={()=>(<div><h1>Not Found 404</h1></div>)} />
               </Switch>
             </main>
@@ -130,7 +103,6 @@ class App extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    movies:state.movies.movies,
     search:state.movies.search,
     searchIsLoading:state.movies.searchIsLoading,
     pathname: state.router.location.pathname,

@@ -9,6 +9,9 @@ const initialState = {
   movieIsLoading: false,
   movieHasError:null,
   movie:null,
+  activePagePopular: 1,
+  activePageLatest: 1,
+  totalMovies: 1,
   movies:[],
   searchIsLoading:false,
   search:[],
@@ -21,14 +24,18 @@ const moviesReducer = (state = initialState, action) => {
       return {
         ...state,
         moviesAreLoading: false,
-        movies: action.payload
+        activePagePopular: action.payload.activePagePopular,
+        totalMovies: action.payload.totalMovies,
+        movies: action.payload.movies
       }
     }
     case constants.SET_LATEST:{
       return {
         ...state,
         moviesAreLoading: false,
-        movies: action.payload
+        activePageLatest: action.payload.activePageLatest,
+        totalMovies: action.payload.totalMovies,
+        movies: action.payload.movies
       }
     }
     case constants.SET_SEARCH:{

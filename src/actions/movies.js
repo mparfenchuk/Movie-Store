@@ -64,12 +64,12 @@ function getGenres() {
   return axios.get('https://api.themoviedb.org/3/genre/movie/list?api_key=79d36b7841b090ecd252b160c9f3d79d&language=en-US');
 }
 
-function getPopular() {
-  return axios.get('https://api.themoviedb.org/3/movie/popular?api_key=79d36b7841b090ecd252b160c9f3d79d&language=en-US&page=1s');
+function getPopular(page) {
+  return axios.get('https://api.themoviedb.org/3/movie/popular?api_key=79d36b7841b090ecd252b160c9f3d79d&language=en-US&page='+page);
 }
 
-function getLatest() {
-  return axios.get('https://api.themoviedb.org/3/movie/now_playing?api_key=79d36b7841b090ecd252b160c9f3d79d&language=en-US&page=1');
+function getLatest(page) {
+  return axios.get('https://api.themoviedb.org/3/movie/now_playing?api_key=79d36b7841b090ecd252b160c9f3d79d&language=en-US&page='+page);
 }
 
 function getSearch(query) {
@@ -144,7 +144,7 @@ export function getMovie(movieId) {
   }
 }
 
-export function getPopularMovies() {
+export function getPopularMovies(page) {
 
   return function(dispatch) {
 
@@ -152,7 +152,7 @@ export function getPopularMovies() {
 
     let movies = [];
 
-    axios.all([getGenres(), getPopular()])
+    axios.all([getGenres(), getPopular(page)])
     .then(axios.spread(function (genres, popular) {
       
       popular.data.results.forEach(element => {
@@ -178,7 +178,7 @@ export function getPopularMovies() {
       }).filter(movie => movie != null);
 
       return dispatch(setPopular(
-        result
+        {'activePagePopular':page,'totalMovies':popular.data.total_results, 'movies':result}
       ));
 
     })).catch(function (error) {
@@ -187,7 +187,7 @@ export function getPopularMovies() {
   }
 }
 
-export function getLatestMovies() {
+export function getLatestMovies(page) {
   
   return function(dispatch) {
 
@@ -195,9 +195,9 @@ export function getLatestMovies() {
 
     let movies = [];
 
-    axios.all([getGenres(), getLatest()])
+    axios.all([getGenres(), getLatest(page)])
     .then(axios.spread(function (genres, latest) {
-      
+
       latest.data.results.forEach(element => {
 
         let genresTitles = genres.data.genres.map((genre, index) => {
@@ -221,7 +221,7 @@ export function getLatestMovies() {
       }).filter(movie => movie != null);
 
       return dispatch(setLatest(
-        result
+        {'activePageLatest':page,'totalMovies':latest.data.total_results, 'movies':result}
       ));
 
     })).catch(function (error) {

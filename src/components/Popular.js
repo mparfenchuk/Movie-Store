@@ -1,50 +1,35 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
 import { getPopularMovies } from '../actions/movies';
+import Pagination from "react-js-pagination";
+import Movies from './layout/Movies'
 
 class Popular extends Component {
  
+  constructor(props) {
+    super(props)
+
+    this.onPageChange = this.onPageChange.bind(this);
+  }
+
+  onPageChange(pageNumber) {
+
+    let { getPopularMovies } = this.props;
+
+    getPopularMovies(pageNumber);
+  }
+
   componentDidMount(){
 
-    let { getPopularMovies } = this.props
+    let { getPopularMovies, activePagePopular } = this.props
 
-    getPopularMovies();
-
+    getPopularMovies(activePagePopular);
   }
 
   render() {
 
-    let {moviesAreLoading, movies} = this.props
-
-    const Movies = ({movies}) => (
-      <div className="container">
-        {movies.map((moviesRow, rowIndex) => {
-          return (<div className="row" key={rowIndex}>
-            {moviesRow.map((movie, index) => 
-              <div className="col-md-3" key={index}>
-                <Link to={"/movie-store/movie/"+movie.id} className="card mb-4 box-shadow movie">
-                    <img className="card-img-top" src={'https://image.tmdb.org/t/p/w500'+movie.poster} alt={movie.title}/>
-                    <div className="card-body">
-                        <h5 className="card-title">{movie.title+' '}</h5>
-                        {movie.genres.map((genre, index)=>
-                          <span className="badge badge-dark mr-2" key={index}>{genre}</span>
-                        )}
-                        <div className="mt-2">
-                          <small className="text-muted">Rating:</small>
-                          <div className="progress">
-                            <div className={(movie.rating > 8) ? "progress-bar bg-success": (movie.rating < 6) ? "progress-bar bg-danger": "progress-bar bg-info"} role="progressbar" style={{width:movie.rating*10+'%'}} aria-valuenow={movie.rating} aria-valuemin="0" aria-valuemax="100">{movie.rating}%</div>
-                          </div>
-                        </div>
-                    </div>
-                </Link>
-              </div>
-            )}
-          </div>);
-        })}
-      </div>
-    ); 
+    let {moviesAreLoading, movies, totalMovies, activePagePopular} = this.props
 
     return (
       <div>
@@ -52,7 +37,19 @@ class Popular extends Component {
         {moviesAreLoading ? 
           <div className="loader mx-auto mt-2"></div>
         :   
-          <Movies movies={movies}/>
+        <div>
+          <Movies type='popular' movies={movies}/>
+          <nav className="mx-auto text-center" aria-label="Page navigation example">
+              <Pagination
+                activePage={activePagePopular}
+                itemsCountPerPage={20}
+                totalItemsCount={totalMovies}
+                itemClass="page-item"
+                linkClass="page-link"
+                onChange={this.onPageChange}
+              />
+            </nav>
+          </div>
         }
       </div>
     );
@@ -62,7 +59,9 @@ class Popular extends Component {
 const mapStateToProps = (state) => {
   return {
     movies:state.movies.movies,
-    moviesAreLoading:state.movies.moviesAreLoading
+    moviesAreLoading:state.movies.moviesAreLoading,
+    totalMovies:state.movies.totalMovies,
+    activePagePopular:state.movies.activePagePopular
   }
 }
 
