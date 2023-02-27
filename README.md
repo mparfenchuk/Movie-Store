@@ -1,2 +1,2 @@
 # Movie-Store
-Demo: [https://nparfen.github.io/movie-store/](https://nparfen.github.io/movie-store/)
+Demo: [https://mparfenchuk.github.io/movie-store/](https://mparfenchuk.github.io/movie-store/)
